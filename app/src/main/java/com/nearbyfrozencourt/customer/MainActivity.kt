@@ -35,8 +35,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
                 Scaffold(bottomBar = { BottomBar(navController = navController)}) {
-                    it.calculateTopPadding()
-                    MainNavigationGraph(navHostController = navController)
+                    MainNavigationGraph(navHostController = navController, bottomPadding = it.calculateTopPadding())
                 }
             }
         }

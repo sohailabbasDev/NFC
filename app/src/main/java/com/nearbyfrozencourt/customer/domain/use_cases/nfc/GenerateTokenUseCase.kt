@@ -1,4 +1,4 @@
-package com.nearbyfrozencourt.customer.domain.use_cases
+package com.nearbyfrozencourt.customer.domain.use_cases.nfc
 
 import android.net.http.HttpException
 import android.util.Log
@@ -17,10 +17,11 @@ class GenerateTokenUseCase @Inject constructor(private val nfcRepository: NFCRep
         try {
             val result = nfcRepository.generateToken(username, password)
             emit(Response.Success(result))
-            Log.d("tagged", "invoke: $result")
+//            Log.d("tagged", "invoke: $result")
         }catch (e : Exception){
             emit(Response.Failure(e.localizedMessage ?: "Something went wrong"))
-            Log.d("tagged", "invoke: ${e.stackTrace}")
+            e.stackTrace
+            Log.d("tagged", "invoke: ${e.localizedMessage}")
             Log.d("tagged", "invoke: ${e.message}")
 
         }

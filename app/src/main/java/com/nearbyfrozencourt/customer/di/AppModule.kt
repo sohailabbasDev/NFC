@@ -5,9 +5,15 @@ import com.nearbyfrozencourt.customer.data.remote.NFCApi
 import com.nearbyfrozencourt.customer.data.repository.DataStoreRepository
 import com.nearbyfrozencourt.customer.data.repository.NFCRepositoryImpl
 import com.nearbyfrozencourt.customer.domain.NFCRepository
-import com.nearbyfrozencourt.customer.domain.use_cases.GenerateTokenUseCase
-import com.nearbyfrozencourt.customer.domain.use_cases.NFCUseCases
-import com.nearbyfrozencourt.customer.domain.use_cases.PaymentDetailsUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.nfc.GenerateTokenUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.nfc.NFCUseCases
+import com.nearbyfrozencourt.customer.domain.use_cases.orders.OrdersUseCases
+import com.nearbyfrozencourt.customer.domain.use_cases.payments.PaymentDetailsUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.payments.PaymentsUseCases
+import com.nearbyfrozencourt.customer.domain.use_cases.user.GetBusinessDetailsUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.user.GetLoggedInUserUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.user.GetProductsUseCase
+import com.nearbyfrozencourt.customer.domain.use_cases.user.UserUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,11 +46,36 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNFCUseCases(nfcRepository: NFCRepository) : NFCUseCases{
+    fun provideNFCUseCases(nfcRepository: NFCRepository) : NFCUseCases {
         return NFCUseCases(
-            generateTokenUseCase = GenerateTokenUseCase(nfcRepository = nfcRepository),
-            paymentDetailsUseCase = PaymentDetailsUseCase(nfcRepository = nfcRepository)
+                generateTokenUseCase = GenerateTokenUseCase(nfcRepository = nfcRepository),
             )
+    }
+
+    @Provides
+    @Singleton
+    fun providePaymentsUseCases(nfcRepository: NFCRepository) : PaymentsUseCases {
+        return PaymentsUseCases(
+            paymentDetailsUseCase = PaymentDetailsUseCase(nfcRepository = nfcRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserUseCases(nfcRepository: NFCRepository) : UserUseCases{
+        return UserUseCases(
+            getLoggedInUserUseCase = GetLoggedInUserUseCase(nfcRepository = nfcRepository),
+            getBusinessDetailsUseCase = GetBusinessDetailsUseCase(nfcRepository = nfcRepository),
+            getProductsUseCase = GetProductsUseCase(nfcRepository = nfcRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrdersUseCases(nfcRepository: NFCRepository) : OrdersUseCases{
+        return OrdersUseCases(
+            getBusinessDetailsUseCase = GetBusinessDetailsUseCase(nfcRepository = nfcRepository)
+        )
     }
 
     @Provides

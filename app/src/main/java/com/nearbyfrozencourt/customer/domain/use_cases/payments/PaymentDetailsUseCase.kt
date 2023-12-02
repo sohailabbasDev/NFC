@@ -1,4 +1,4 @@
-package com.nearbyfrozencourt.customer.domain.use_cases
+package com.nearbyfrozencourt.customer.domain.use_cases.payments
 
 import android.util.Log
 import com.nearbyfrozencourt.customer.data.remote.dto.PaymentDetailsDto
@@ -15,10 +15,11 @@ class PaymentDetailsUseCase @Inject constructor(private val nfcRepository: NFCRe
         try {
             val result = nfcRepository.paymentDetails(authToken = authToken)
             emit(Response.Success(result))
-            Log.d("tagged", "invoke: $result")
+//            Log.d("tagged", "invoke: $result")
         }catch (e : Exception){
             emit(Response.Failure(e.localizedMessage ?: "Something went wrong"))
-            Log.d("tagged", "invoke: ${e.stackTrace}")
+            e.stackTrace
+            Log.d("tagged", "invoke: $e")
             Log.d("tagged", "invoke: ${e.message}")
         }
     }

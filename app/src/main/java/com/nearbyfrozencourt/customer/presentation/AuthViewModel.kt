@@ -8,8 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nearbyfrozencourt.customer.data.remote.dto.GenerateTokenDto
 import com.nearbyfrozencourt.customer.data.repository.DataStoreRepository
-import com.nearbyfrozencourt.customer.domain.use_cases.NFCUseCases
-import com.nearbyfrozencourt.customer.presentation.navigation.util.Graph
+import com.nearbyfrozencourt.customer.domain.use_cases.nfc.NFCUseCases
 import com.nearbyfrozencourt.customer.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -19,28 +18,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
+    dataStoreRepository: DataStoreRepository,
     private val nfcUseCases: NFCUseCases
-) : ViewModel() {
+) : BaseViewModel(dataStoreRepository) {
 
     private val _loginState = mutableStateOf<Response<GenerateTokenDto>>(Response.Loading(false))
     val state : State<Response<GenerateTokenDto>> = _loginState
-
-    private val _isLoggedIn : MutableState<Boolean> = mutableStateOf(false)
-    val isLoggedIn : State<Boolean> = _isLoggedIn
 
     var username = mutableStateOf("")
         private set
     var password = mutableStateOf("")
         private set
-
-    init {
-        viewModelScope.launch {
-            dataStoreRepository.getUserLoggedBoolean.collect{logged->
-                _isLoggedIn.value = logged
-            }
-        }
-    }
 
     fun generateToken(){
         nfcUseCases.generateTokenUseCase(username = username.value.trim(), password = password.value.trim()).onEach {
@@ -49,10 +37,10 @@ class AuthViewModel @Inject constructor(
                     _loginState.value = Response.Loading(it.loading)
                 }
                 is Response.Success -> {
-                    _loginState.value = Response.Success(it.data)
                     dataStoreRepository.saveUserLoggedBoolean(true)
                     dataStoreRepository.setAuthToken(it.data.access_token)
-                    Log.d("tagged", "generateToken: ${it.data}")
+                    _loginState.value = Response.Success(it.data)
+//                    Log.d("tagged", "generateToken: ${it.data}")
                 }
                 is Response.Failure -> {
                     _loginState.value = Response.Failure(it.message)

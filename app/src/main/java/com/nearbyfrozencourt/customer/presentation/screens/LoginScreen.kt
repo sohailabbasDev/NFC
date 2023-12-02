@@ -144,8 +144,8 @@ fun LoginScreen(authViewModel: AuthViewModel, navHostController: NavHostControll
                 }
             }
             is Response.Success -> {
-                Toaster.toastShort(context, "Login is successful")
                 LaunchedEffect(Unit){
+                    Toaster.toastShort(context, "Login is successful")
                     navHostController.popBackStack()
                     navHostController.navigate(MainRoutes.Home.route)
                 }
